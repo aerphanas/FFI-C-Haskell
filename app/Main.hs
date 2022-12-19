@@ -1,7 +1,10 @@
 {-# LANGUAGE ForeignFunctionInterface #-}
-{-# LANGUAGE HexFloatLiterals #-}
 
 module Main where
+
+-- you can also call comman like on shell
+-- with callProcess
+import System.Process (callProcess)
 
 -- import Haskell type representing the C int type
 import Foreign.C.Types ( CInt(..), CDouble(..) )
@@ -40,6 +43,8 @@ main = do
               "factorial 5 is "  ++ show dofac            ++ "\n" ++
               "factorial 10 is " ++ show dofacpp 
   _ <-  c_sayHello -- Bind the return value of the sayHello function to the _ variable
+  putStrLn "\nprinting result of ls -la process"
+  callProcess "ls" ["-la"]
   return ()
   -- Return an empty tuple () to indicate that 
   -- the main function has a return type of IO ()

@@ -18,7 +18,8 @@ common warnings
 executable FFI-C-Haskell
     import:           warnings
     main-is:          Main.hs
-    build-depends:    base ^>=4.15.1.0
+    build-depends:    base ^>=4.15.1.0,
+                      process
     hs-source-dirs:   app
     default-language: Haskell2010
     --foreign-libraries: function
