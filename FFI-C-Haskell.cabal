@@ -22,4 +22,5 @@ executable FFI-C-Haskell
     hs-source-dirs:   app
     default-language: Haskell2010
     --foreign-libraries: function
-    c-sources: cbits/function.c
+    c-sources:        cbits/function.c
+    cxx-sources:      cbits/math.cpp

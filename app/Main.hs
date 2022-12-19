@@ -1,29 +1,45 @@
 {-# LANGUAGE ForeignFunctionInterface #-}
+{-# LANGUAGE HexFloatLiterals #-}
 
 module Main where
 
 -- import Haskell type representing the C int type
-import Foreign.C.Types ( CInt(..) )
+import Foreign.C.Types ( CInt(..), CDouble(..) )
 
 -- Import the sayHello & factorial function
--- from the function.o object file
-foreign import ccall "sayHello" sayHello :: IO CInt
-foreign import ccall "factorial" factorial :: CInt -> IO CInt
+-- from the function.c
+foreign import ccall "sayHello" c_sayHello :: IO CInt
+foreign import ccall "factorial" c_factorial :: CInt -> IO CInt
 
--- use factorial function from c Foreign Function
+-- Import the add & factorial function
+-- from the math.cpp
+foreign import ccall "add" cpp_add :: CDouble -> CDouble -> CDouble
+foreign import ccall "factorialPlus" cpp_factorial :: CInt -> IO CInt
+
+-- use c_factorial function from c Foreign Function
 doFactorial :: Int -> IO Int
 doFactorial n = do
-  result <- factorial (fromIntegral n)
+  result <- c_factorial (fromIntegral n)
   return (fromIntegral result)
 
--- Define the main function that calls the sayHello function
+-- use cpp_factorial function from c++ Foreign Function
+doFactorialPP :: Int -> IO Int
+doFactorialPP n = do
+  result <- cpp_factorial (fromIntegral n)
+  return (fromIntegral result)
+
+-- use cpp_add function from c++ Foreign Function
+add' :: Double -> Double -> CDouble
+add' x y = cpp_add (realToFrac x) (realToFrac y)
+
 main :: IO ()
 main = do
-  -- Bind doFactorial function to dofac
   dofac <- doFactorial 5
-  putStrLn $  "factorial 5 is " ++ show dofac
-  -- Bind the return value of the sayHello function to the _ variable
-  _ <- sayHello
+  dofacpp <- doFactorialPP 10
+  putStrLn $  "3.14 + 2.71 = "   ++ show (add' 3.14 2.71) ++ "\n" ++
+              "factorial 5 is "  ++ show dofac            ++ "\n" ++
+              "factorial 10 is " ++ show dofacpp 
+  _ <-  c_sayHello -- Bind the return value of the sayHello function to the _ variable
+  return ()
   -- Return an empty tuple () to indicate that 
   -- the main function has a return type of IO ()
-  return ()
